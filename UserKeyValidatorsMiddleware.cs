@@ -11,40 +11,6 @@
         {
             await _next.Invoke(context);
             return;
-            /*if (context.Request.Path.ToString().Contains("/auth/") )//access to everybody for authorization
-            {
-                await _next.Invoke(context);
-                return;
-            }
-            
-
-            if (!context.Request.Headers.Keys.Contains("user-key"))
-            {
-                context.Response.StatusCode = 400; //Bad Request                
-                await context.Response.WriteAsync("User Key is missing");
-                return;
-            }
-            else
-            {
-                var token = context.Request.Headers["user-key"];
-                if (service.TryGetUserByToken(token, out var user))
-                {
-                    if (user.CheckAccess("moderator"))
-                    {
-                        //ok - additional features
-                    }
-                    await _next.Invoke(context);
-                    return;
-                }
-                else
-                {
-                    context.Response.StatusCode = 401; //UnAuthorized
-                    await context.Response.WriteAsync("Invalid User Key");
-                    return;
-                }
-            }
-            await _next.Invoke(context);
-            */
         }
     }
     public static class UserKeyValidatorsExtension
