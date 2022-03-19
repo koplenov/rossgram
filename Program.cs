@@ -1,4 +1,5 @@
 using System.Net.Mime;
+using Hack2022;
 using Microsoft.AspNetCore.Mvc;
 using rossgram;
 
@@ -13,18 +14,15 @@ app.MapGet("/photos/{userName}", (string userName,UserDataService service) =>
 {
     return Results.Ok(service.Getuser(userName).Images);
 });
-app.MapPost("/photo", ([FromBody]UserModel model, UserDataService service) =>
+app.MapPost("/photo/{userName}", ([FromBody]string photo,string userName, UserDataService service) =>
 {
-    service.AddUser(model);
+    var user = service.Getuser(userName);
+    user.Images.Add(photo);
+    service.UpdateUser(userName,user);
     return Results.Ok("posted");
 });
 
+app.ApplyUserKeyValidation();
 app.UseCors(c => c.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
 app.Run();
-
-
-//byte[] imageArray = System.IO.File.ReadAllBytes(@"1.png");
-//string base64ImageRepresentation = Convert.ToBase64String(imageArray);
-
-
