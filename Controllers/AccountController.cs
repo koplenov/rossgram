@@ -1,8 +1,9 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using rossgram;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+
+namespace rossgram.Controllers;
 
 public class AccountController : Controller
 {
@@ -46,19 +47,23 @@ public class AccountController : Controller
         }
         return Token(username, password, service);
     }
-
+    [HttpGet("/test")]
+    public IActionResult Test(UserDataService service)
+    {
+        service.AddUser(new UserModel());
+        return Json("okay");
+    }
     private ClaimsIdentity GetIdentity(string username, string password,UserDataService service)
     {
         var User = service.Getuser(login: username);
-        if (User.Password != password) User = null;
-        if (User != null)
+        if (User != null&&User.Password==password)
         {
             var claims = new List<Claim>
             {
                 new Claim(ClaimsIdentity.DefaultNameClaimType, User.Login),
                 new Claim(ClaimsIdentity.DefaultRoleClaimType, User.Role)
             };
-            ClaimsIdentity claimsIdentity =
+            var claimsIdentity =
                 new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
                     ClaimsIdentity.DefaultRoleClaimType);
             return claimsIdentity;
