@@ -1,8 +1,4 @@
-﻿
-
-using rossgram;
-
-namespace Hack2022
+﻿namespace rossgram
 {
     public class UserKeyValidatorsMiddleware
     {
@@ -15,7 +11,7 @@ namespace Hack2022
         {
             await _next.Invoke(context);
             return;
-            if (context.Request.Path.ToString().Contains("/auth/") )//access to everybody for authorization
+            /*if (context.Request.Path.ToString().Contains("/auth/") )//access to everybody for authorization
             {
                 await _next.Invoke(context);
                 return;
@@ -48,6 +44,7 @@ namespace Hack2022
                 }
             }
             await _next.Invoke(context);
+            */
         }
     }
     public static class UserKeyValidatorsExtension
