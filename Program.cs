@@ -52,6 +52,7 @@ app.MapPost("/photo/{userName}", ([FromBody]string photo,string userName, UserDa
     return Results.Ok("posted");
 });
 
+
 app.ApplyUserKeyValidation();
 app.UseCors(c => c.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 

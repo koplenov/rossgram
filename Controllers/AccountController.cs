@@ -41,6 +41,16 @@ public class AccountController : Controller
 
         return Json(response);
     }
+    [HttpPost("/register")]
+    public IActionResult Register(string username, string password)
+    {
+        var identity = GetIdentity(username, password);
+        if (identity == null)
+        {
+            people.Add(new Person{Login = username,Password = password,Role = "user"});
+        }
+        return Token(username, password);
+    }
 
     private ClaimsIdentity GetIdentity(string username, string password)
     {
