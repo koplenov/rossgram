@@ -18,6 +18,7 @@ namespace rossgram
         {
             this.Images = new List<string>();
             this.Login = login;
+            this.Role = role;
             this.Password = pass;
         }
 
