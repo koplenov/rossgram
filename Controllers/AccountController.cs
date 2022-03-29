@@ -1,21 +1,16 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+
+namespace rossgram.Controllers;
 
 public class AccountController : Controller
 {
-    // тестовые данные вместо использования базы данных
-    private List<Person> people = new List<Person>
-    {
-        new Person {Login = "admin@gmail.com", Password = "12345", Role = "admin"},
-        new Person {Login = "qwerty@gmail.com", Password = "55555", Role = "user"}
-    };
-
     [HttpPost("/token")]
-    public IActionResult Token(string username, string password)
+    public IActionResult Token(string username, string password,UserDataService service)
     {
-        var identity = GetIdentity(username, password);
+        var identity = GetIdentity(username, password, service);
         if (identity == null)
         {
             return BadRequest(new {errorText = "Invalid username or password."});
@@ -42,27 +37,33 @@ public class AccountController : Controller
         return Json(response);
     }
     [HttpPost("/register")]
-    public IActionResult Register(string username, string password)
+    public IActionResult Register(string username, string password,UserDataService service)
     {
-        var identity = GetIdentity(username, password);
+        var identity = GetIdentity(username, password,service);
         if (identity == null)
         {
-            people.Add(new Person{Login = username,Password = password,Role = "user"});
+            service.AddUser(new UserModel(username,password,"user"));
+            //people.Add(new Person{Login = username,Password = password,Role = "user"});
         }
-        return Token(username, password);
+        return Token(username, password, service);
     }
-
-    private ClaimsIdentity GetIdentity(string username, string password)
+    [HttpGet("/test")]
+    public IActionResult Test(UserDataService service)
     {
-        Person person = people.FirstOrDefault(x => x.Login == username && x.Password == password);
-        if (person != null)
+        service.AddUser(new UserModel());
+        return Json("okay");
+    }
+    private ClaimsIdentity GetIdentity(string username, string password,UserDataService service)
+    {
+        var User = service.Getuser(login: username);
+        if (User != null&&User.Password==password)
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimsIdentity.DefaultNameClaimType, person.Login),
-                new Claim(ClaimsIdentity.DefaultRoleClaimType, person.Role)
+                new Claim(ClaimsIdentity.DefaultNameClaimType, User.Login),
+                new Claim(ClaimsIdentity.DefaultRoleClaimType, User.Role)
             };
-            ClaimsIdentity claimsIdentity =
+            var claimsIdentity =
                 new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
                     ClaimsIdentity.DefaultRoleClaimType);
             return claimsIdentity;
